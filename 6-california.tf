@@ -1,12 +1,12 @@
 variable "vpc_availability_zone_California" {
   type        = list(string)
   description = "Availability Zone"
-  default     = ["us-west-1a", "us-west-1c"]
+  default     = ["us-west-1a", "us-west-1b"]
 }
 
 // VPC
 resource "aws_vpc" "california" {
-  cidr_block           = "10.236.0.0/16"
+  cidr_block           = "10.75.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
   provider             = aws.california
@@ -96,7 +96,7 @@ resource "aws_route_table" "california_route_table_private_subnet" {
   }
 
   route {
-    cidr_block         = "10.230.0.0/16"
+    cidr_block         = "10.70.0.0/16"
     transit_gateway_id = aws_ec2_transit_gateway.local_california.id
   }
 
