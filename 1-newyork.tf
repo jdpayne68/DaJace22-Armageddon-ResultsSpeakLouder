@@ -1,7 +1,7 @@
 variable "vpc_availability_zone_NY" {
   type        = list(string)
   description = "Availability Zone"
-  default     = ["us-east-1a", "us-east-1c"]
+  default     = ["us-east-1a", "us-east-1b"]
 }
 
 // VPC
