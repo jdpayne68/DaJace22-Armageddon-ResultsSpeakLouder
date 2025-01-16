@@ -1,38 +1,38 @@
-variable "vpc_availability_zone_NY" {
+variable "vpc_availability_zone_HK" {
   type        = list(string)
   description = "Availability Zone"
-  default     = ["us-east-1a", "us-east-1c"]
+  default     = ["ap-east-1a", "ap-east-1c"]
 }
 
 // VPC
-resource "aws_vpc" "new_york" {
+resource "aws_vpc" "hong_kong" {
   cidr_block           = "10.231.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
-  provider             = aws.new_york
+  provider             = aws.hong_kong
   tags = {
     Name = "New York VPC"
   }
 }
 
 // Subnets
-resource "aws_subnet" "public_subnet_NY" {
-  vpc_id            = aws_vpc.new_york.id
-  count             = length(var.vpc_availability_zone_NY)
-  cidr_block        = cidrsubnet(aws_vpc.new_york.cidr_block, 8, count.index + 1)
-  availability_zone = element(var.vpc_availability_zone_NY, count.index)
-  provider          = aws.new_york
+resource "aws_subnet" "public_subnet_HK" {
+  vpc_id            = aws_vpc.hong_kong.id
+  count             = length(var.vpc_availability_zone_HK)
+  cidr_block        = cidrsubnet(aws_vpc.hong_kong.cidr_block, 8, count.index + 1)
+  availability_zone = element(var.vpc_availability_zone_HK, count.index)
+  provider          = aws.hong_kong
   tags = {
     Name = "New York Public Subnet${count.index + 1}",
   }
 }
 
-resource "aws_subnet" "private_subnet_NY" {
-  vpc_id            = aws_vpc.new_york.id
-  count             = length(var.vpc_availability_zone_NY)
-  cidr_block        = cidrsubnet(aws_vpc.new_york.cidr_block, 8, count.index + 11)
-  availability_zone = element(var.vpc_availability_zone_NY, count.index)
-  provider          = aws.new_york
+resource "aws_subnet" "private_subnet_HK" {
+  vpc_id            = aws_vpc.hong_kong.id
+  count             = length(var.vpc_availability_zone_HK)
+  cidr_block        = cidrsubnet(aws_vpc.hong_kong.cidr_block, 8, count.index + 11)
+  availability_zone = element(var.vpc_availability_zone_HK, count.index)
+  provider          = aws.hong_kong
   tags = {
     Name = "New York Private Subnet${count.index + 1}",
   }
@@ -40,8 +40,8 @@ resource "aws_subnet" "private_subnet_NY" {
 
 // IGW
 resource "aws_internet_gateway" "newyork_igw" {
-  vpc_id   = aws_vpc.new_york.id
-  provider = aws.new_york
+  vpc_id   = aws_vpc.hong_kong.id
+  provider = aws.hong_kong
 
   tags = {
     Name = "newyork_igw"
@@ -49,9 +49,9 @@ resource "aws_internet_gateway" "newyork_igw" {
 }
 
 // RT for the public subnet
-resource "aws_route_table" "new_york_route_table_public_subnet" {
-  vpc_id   = aws_vpc.new_york.id
-  provider = aws.new_york
+resource "aws_route_table" "hong_kong_route_table_public_subnet" {
+  vpc_id   = aws_vpc.hong_kong.id
+  provider = aws.hong_kong
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -65,39 +65,39 @@ resource "aws_route_table" "new_york_route_table_public_subnet" {
 }
 
 // Association between RT and IG
-resource "aws_route_table_association" "new_york_public_subnet_association" {
-  route_table_id = aws_route_table.new_york_route_table_public_subnet.id
-  count          = length((var.vpc_availability_zone_NY))
-  subnet_id      = element(aws_subnet.public_subnet_NY[*].id, count.index)
-  provider       = aws.new_york
+resource "aws_route_table_association" "hong_kong_public_subnet_association" {
+  route_table_id = aws_route_table.hong_kong_route_table_public_subnet.id
+  count          = length((var.vpc_availability_zone_HK))
+  subnet_id      = element(aws_subnet.public_subnet_HK[*].id, count.index)
+  provider       = aws.hong_kong
 }
 
 // EIP
-resource "aws_eip" "new_york_eip" {
+resource "aws_eip" "hong_kong_eip" {
   domain   = "vpc"
-  provider = aws.new_york
+  provider = aws.hong_kong
 }
 
 // NAT
-resource "aws_nat_gateway" "new_york_nat" {
-  allocation_id = aws_eip.new_york_eip.id
-  subnet_id     = aws_subnet.public_subnet_NY[0].id
-  provider      = aws.new_york
+resource "aws_nat_gateway" "hong_kong_nat" {
+  allocation_id = aws_eip.hong_kong_eip.id
+  subnet_id     = aws_subnet.public_subnet_HK[0].id
+  provider      = aws.hong_kong
 }
 
 // RT for private Subnet
-resource "aws_route_table" "new_york_route_table_private_subnet" {
-  vpc_id   = aws_vpc.new_york.id
-  provider = aws.new_york
+resource "aws_route_table" "hong_kong_route_table_private_subnet" {
+  vpc_id   = aws_vpc.hong_kong.id
+  provider = aws.hong_kong
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_nat_gateway.new_york_nat.id
+    gateway_id = aws_nat_gateway.hong_kong_nat.id
   }
 
   route {
     cidr_block         = "10.230.0.0/16"
-    transit_gateway_id = aws_ec2_transit_gateway.local_new_york.id
+    transit_gateway_id = aws_ec2_transit_gateway.local_hong_kong.id
   }
 
   tags = {
@@ -107,20 +107,20 @@ resource "aws_route_table" "new_york_route_table_private_subnet" {
 }
 
 // RT Association Private
-resource "aws_route_table_association" "new_york_private_subnet_association" {
-  route_table_id = aws_route_table.new_york_route_table_private_subnet.id
-  count          = length((var.vpc_availability_zone_NY))
-  subnet_id      = element(aws_subnet.private_subnet_NY[*].id, count.index)
-  provider       = aws.new_york
+resource "aws_route_table_association" "hong_kong_private_subnet_association" {
+  route_table_id = aws_route_table.hong_kong_route_table_private_subnet.id
+  count          = length((var.vpc_availability_zone_HK))
+  subnet_id      = element(aws_subnet.private_subnet_HK[*].id, count.index)
+  provider       = aws.hong_kong
 }
 
 // Security Groups
-resource "aws_security_group" "new_york_alb_sg" {
-  name        = "new_york-alb-sg"
+resource "aws_security_group" "hong_kong_alb_sg" {
+  name        = "hong_kong-alb-sg"
   description = "Security Group for Application Load Balancer"
-  provider    = aws.new_york
+  provider    = aws.hong_kong
 
-  vpc_id = aws_vpc.new_york.id
+  vpc_id = aws_vpc.hong_kong.id
 
   ingress {
     from_port   = 80
@@ -136,23 +136,23 @@ resource "aws_security_group" "new_york_alb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "new_york-alb-sg"
+    Name = "hong_kong-alb-sg"
   }
 }
 
 // Security Group For EC2
-resource "aws_security_group" "new_york_ec2_sg" {
-  name        = "new_york-ec2-sg"
+resource "aws_security_group" "hong_kong_ec2_sg" {
+  name        = "hong_kong-ec2-sg"
   description = "Security Group for Webserver Instance"
-  provider    = aws.new_york
+  provider    = aws.hong_kong
 
-  vpc_id = aws_vpc.new_york.id
+  vpc_id = aws_vpc.hong_kong.id
 
   ingress {
     from_port       = 80
     to_port         = 80
     protocol        = "TCP"
-    security_groups = [aws_security_group.new_york_alb_sg.id]
+    security_groups = [aws_security_group.hong_kong_alb_sg.id]
 
   }
 
@@ -164,7 +164,7 @@ resource "aws_security_group" "new_york_ec2_sg" {
   }
 
   tags = {
-    Name = "new_york-ec2-sg"
+    Name = "hong_kong-ec2-sg"
   }
 }
 
@@ -173,10 +173,10 @@ resource "aws_lb" "newyork_alb" {
   name                       = "newyork-load-balancer"
   load_balancer_type         = "application"
   internal                   = false
-  subnets                    = aws_subnet.public_subnet_NY[*].id
+  subnets                    = aws_subnet.public_subnet_HK[*].id
   depends_on                 = [aws_internet_gateway.newyork_igw]
   enable_deletion_protection = false
-  provider                   = aws.new_york
+  provider                   = aws.hong_kong
 
   tags = {
     Name    = "newyorkLoadBalancer"
@@ -189,8 +189,8 @@ resource "aws_lb_target_group" "newyork-tg" {
   name        = "newyork-tg"
   port        = 80
   protocol    = "HTTP"
-  vpc_id      = aws_vpc.new_york.id
-  provider    = aws.new_york
+  vpc_id      = aws_vpc.hong_kong.id
+  provider    = aws.hong_kong
   target_type = "instance"
 
   health_check {
@@ -215,7 +215,7 @@ resource "aws_lb_listener" "newyork_http" {
   load_balancer_arn = aws_lb.newyork_alb.arn
   port              = 80
   protocol          = "HTTP"
-  provider          = aws.new_york
+  provider          = aws.hong_kong
 
   default_action {
     type             = "forward"
@@ -225,7 +225,7 @@ resource "aws_lb_listener" "newyork_http" {
 
 // Launch Template
 resource "aws_launch_template" "newyork_LT" {
-  provider      = aws.new_york
+  provider      = aws.hong_kong
   name          = "newyork_LT"
   image_id      = "ami-0453ec754f44f9a4a"
   instance_type = "t2.micro"
@@ -234,26 +234,26 @@ resource "aws_launch_template" "newyork_LT" {
 
   network_interfaces {
     associate_public_ip_address = false
-    security_groups             = [aws_security_group.new_york_ec2_sg.id]
+    security_groups             = [aws_security_group.hong_kong_ec2_sg.id]
   }
 
   tag_specifications {
     resource_type = "instance"
     tags = {
-      Name = "new_york-ec2-web-server"
+      Name = "hong_kong-ec2-web-server"
     }
   }
 }
 
 // Auto Scaling Group
-resource "aws_autoscaling_group" "new_york_ec2_asg" {
+resource "aws_autoscaling_group" "hong_kong_ec2_asg" {
   max_size            = 3
   min_size            = 2
   desired_capacity    = 2
-  name                = "new_york-web-server-asg"
+  name                = "hong_kong-web-server-asg"
   target_group_arns   = [aws_lb_target_group.newyork-tg.arn]
-  vpc_zone_identifier = aws_subnet.private_subnet_NY[*].id
-  provider            = aws.new_york
+  vpc_zone_identifier = aws_subnet.private_subnet_HK[*].id
+  provider            = aws.hong_kong
 
   launch_template {
     id      = aws_launch_template.newyork_LT.id
@@ -264,22 +264,22 @@ resource "aws_autoscaling_group" "new_york_ec2_asg" {
 }
 /*
 // TGW
-resource "aws_ec2_transit_gateway" "new_york-TGW" {
-  description = "new_york-TGW"
-  provider    = aws.new_york
+resource "aws_ec2_transit_gateway" "hong_kong-TGW" {
+  description = "hong_kong-TGW"
+  provider    = aws.hong_kong
 
   tags = {
-    Name     = "new_york-TGW"
+    Name     = "hong_kong-TGW"
     Service  = "TGW"
-    Location = "new_york"
+    Location = "hong_kong"
   }
 }
 
 // VPC Attachment
-resource "aws_ec2_transit_gateway_vpc_attachment" "new_york-TGW-attachment" {
-  subnet_ids         = aws_subnet.public_subnet_NY[*].id
-  transit_gateway_id = aws_ec2_transit_gateway.new_york-TGW.id
-  vpc_id             = aws_vpc.new_york.id
-  provider           = aws.new_york
+resource "aws_ec2_transit_gateway_vpc_attachment" "hong_kong-TGW-attachment" {
+  subnet_ids         = aws_subnet.public_subnet_HK[*].id
+  transit_gateway_id = aws_ec2_transit_gateway.hong_kong-TGW.id
+  vpc_id             = aws_vpc.hong_kong.id
+  provider           = aws.hong_kong
 }
 */
