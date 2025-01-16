@@ -25,7 +25,7 @@ resource "aws_subnet" "private-security-zone" {
 }
 resource "aws_subnet" "public-security-zone" { 
   vpc_id            = aws_vpc.security_zone.id
-  cidr_block        = "10.77.1.0/16"
+  cidr_block        = "10.77.1.0/24"
   availability_zone = "ap-northeast-1a" #Change to your AZ
   map_public_ip_on_launch = true
   provider = aws.tokyo
@@ -65,7 +65,7 @@ provider = aws.tokyo
     nat_gateway_id = aws_nat_gateway.nat.id
   }
     route {
-    cidr_block         = "10.70.0.0/16"
+    cidr_block         = "10.70.0.0/24"
     transit_gateway_id = aws_ec2_transit_gateway.peer.id
   }
 
