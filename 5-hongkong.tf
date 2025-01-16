@@ -6,7 +6,7 @@ variable "vpc_availability_zone_HK" {
 
 // VPC
 resource "aws_vpc" "hong_kong" {
-  cidr_block           = "10.231.0.0/16"
+  cidr_block           = "10.76.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
   provider             = aws.hong_kong
@@ -96,7 +96,7 @@ resource "aws_route_table" "hong_kong_route_table_private_subnet" {
   }
 
   route {
-    cidr_block         = "10.230.0.0/16"
+    cidr_block         = "10.70.0.0/16"
     transit_gateway_id = aws_ec2_transit_gateway.local_hong_kong.id
   }
 

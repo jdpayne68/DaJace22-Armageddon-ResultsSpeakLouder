@@ -27,7 +27,7 @@ resource "aws_ec2_transit_gateway" "local_hong_kong" {
 #############################################################
 resource "aws_ec2_transit_gateway_vpc_attachment" "local_hong_kong_attachment" {
   provider = aws.hong_kong 
-  subnet_ids         = aws_subnet.private_subnet_hong_kong[*].id 
+  subnet_ids         = aws_subnet.private_subnet_HK[*].id 
   transit_gateway_id = aws_ec2_transit_gateway.local_hong_kong.id
   vpc_id             = aws_vpc.hong_kong.id 
   dns_support        = "enable"
