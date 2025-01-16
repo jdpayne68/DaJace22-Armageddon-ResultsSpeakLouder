@@ -1,7 +1,7 @@
 variable "vpc_availability_zone_California" {
   type        = list(string)
   description = "Availability Zone"
-  default     = ["us-west-1a", "us-west-1c"]
+  default     = ["us-west-1a", "us-west-1b"]
 }
 
 // VPC
