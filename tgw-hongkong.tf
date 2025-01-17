@@ -3,7 +3,7 @@ variable "regions_HK" {
   default = ["hong_kong"]
 }
 
-variable "hub_region_ld" {
+variable "hub_region_hk" {
   default = "tokyo" 
 }
 

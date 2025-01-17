@@ -227,7 +227,7 @@ resource "aws_lb_listener" "hong_kong_http" {
 resource "aws_launch_template" "hong_kong_LT" {
   provider      = aws.hong_kong
   name          = "hong_kong_LT"
-  image_id      = "ami-0453ec754f44f9a4a"
+  image_id      = "ami-08d17dd56120aa5b4"
   instance_type = "t3.micro"
 
     user_data = filebase64("userdata.sh")
