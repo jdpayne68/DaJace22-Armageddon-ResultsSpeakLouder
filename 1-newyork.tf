@@ -262,3 +262,4 @@ resource "aws_autoscaling_group" "new_york_ec2_asg" {
 
   health_check_type = "EC2"
 }
+
