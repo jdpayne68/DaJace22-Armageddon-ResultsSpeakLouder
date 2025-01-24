@@ -1,3 +1,5 @@
+#Project Armageddon
+
 Here’s an updated README to include the **user data scripts** for Promtail, Loki, and Grafana:
 
 ---
@@ -13,33 +15,33 @@ Each spoke region contains:
   - **ALB** (Application Load Balancer)
   - **Auto Scaling Group** with EC2 instances
   - **NAT Gateway** and **Internet Gateway**
-  - Each EC2 instance has **Promtail** installed via a **user data script** for log collection.
+  - Each EC2 instance has **Promtail** installed via a **user data script** for log collection
 
 The central hub region includes:
 - Two **VPCs**:
-  - **SIEM VPC**: Hosts **Loki/Grafana** for centralized logging and monitoring in a private subnet, installed through a **user data script**.
-  - A web application VPC mirroring spoke regions.
+  - **SIEM VPC**: Hosts **Loki/Grafana** for centralized logging and monitoring in a private subnet, installed through a **user data script**
+  - A web application VPC mirroring spoke regions
 
-All regions are interconnected with **Transit Gateways (TGWs)**, configured with **peering connections** to ensure seamless communication.
+All regions are interconnected with **Transit Gateways (TGWs)**, configured with **peering connections** to ensure seamless communication
 
 ---
 
 ## Features
 1. **Multi-Region Deployment**:
-   - 6 spoke regions and 1 central hub region.
+   - 6 spoke regions and 1 central hub region
 2. **Hub-and-Spoke Configuration**:
-   - Centralized monitoring and logging.
-   - Fully connected Transit Gateway architecture.
+   - Centralized monitoring and logging
+   - Fully connected Transit Gateway architecture
 3. **Automated Setup**:
-   - **Promtail**, **Loki**, and **Grafana** are deployed automatically through user data scripts.
+   - **Promtail**, **Loki**, and **Grafana** are deployed automatically through user data scripts
 4. **Infrastructure Automation**:
-   - Infrastructure defined and provisioned using **Terraform**.
+   - Infrastructure defined and provisioned using **Terraform**
 5. **Centralized Monitoring**:
-   - **Promtail** collects logs from all regions.
-   - Logs are aggregated in the central hub region and visualized in **Grafana**.
+   - **Promtail** collects logs from all regions
+   - Logs are aggregated in the central hub region and visualized in **Grafana**
 6. **High Availability**:
-   - Auto-scaling and load balancing in each region.
-   - Resilient transit gateway connections.
+   - Auto-scaling and load balancing in each region
+   - Resilient transit gateway connections
 
 ---
 
@@ -47,7 +49,6 @@ All regions are interconnected with **Transit Gateways (TGWs)**, configured with
 
 ### Network Overview
 ![Network Diagram](https://github.com/user-attachments/assets/6ba644a0-d35f-4fa3-b12f-2a84df6a1f97)
-
 
 
 ### Routing Architecture
@@ -60,9 +61,9 @@ All regions are interconnected with **Transit Gateways (TGWs)**, configured with
 
 ## Prerequisites
 - **Terraform** (>= v1.0)
-- AWS credentials configured for access to all 7 regions.
-- Access to the Terraform state storage backend (e.g., S3).
-- Installed tools for monitoring and logging (Loki, Grafana, Promtail).
+- AWS credentials configured for access to all 7 regions
+- Access to the Terraform state storage backend (e.g., S3)
+- Installed tools for monitoring and logging (Loki, Grafana, Promtail)
 
 ---
 
@@ -70,7 +71,7 @@ All regions are interconnected with **Transit Gateways (TGWs)**, configured with
 
 ### Step 1: Clone the Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/DaJace22/DaJace22-Armageddon-ResultsSpeakLouder
 cd <project-directory>
 ```
 
@@ -79,20 +80,40 @@ cd <project-directory>
 terraform init
 ```
 
-### Step 3: Customize Variables
-Update the file to set required variables, such as region names, CIDR blocks, and instance sizes.
+#### Step 3: Validate Terraform
+```bash
+terraform validate
+```
 
-### Step 4: Deploy Infrastructure
+### Step 4: Preview the Plan for Infrastructure Set up
+```bash
+terraform plan
+```
+
+#### Step 5: Deploy the Infrastructure
+```bash
+terraform apply
+```
+
+### Step 6: 
+
+
+
+
+### Step X: Customize Variables
+Update the file to set required variables, such as region names, CIDR blocks, and instance sizes
+
+### Step X: 
 ```bash
 terraform apply
 ```
 
 ### Step 5: Validate Setup
-1. Verify that all VPCs are deployed in their respective regions.
+1. Login to AWS Console, go region by region, and verify that all VPCs are deployed in their respective regions
 2. Confirm Promtail, Loki, and Grafana installations:
-   - Promtail: Check logs on EC2 instances in spoke regions.
-   - Loki/Grafana: Access Grafana in the central region.
-3. Check connectivity across regions using the transit gateways.
+   - Promtail: Check logs on EC2 instances in spoke regions
+   - Loki/Grafana: Access Grafana in the central region
+3. Check connectivity across regions using the transit gateways
 
 ---
 
@@ -100,28 +121,28 @@ terraform apply
 
 ### Promtail Setup (Spoke Regions)
 Each EC2 instance in the spoke regions uses a user data script to:
-- Install Promtail.
-- Configure it to forward logs to the Loki instance in the central region.
+- Install Promtail
+- Configure it to forward logs to the Loki instance in the central region
 
 ### Loki and Grafana Setup (Hub Region)
 The SIEM VPC's EC2 instance in the central region uses a user data script to:
-- Install Loki for log storage.
-- Install Grafana for visualization.
-- Configure Grafana to use Loki as a data source.
+- Install Loki for log storage
+- Install Grafana for visualization
+- Configure Grafana to use Loki as a data source
 
 ---
 
 ## Testing and Validation
-- **Connectivity**: Verify network connectivity between all regions using transit gateways.
-- **Logging**: Confirm logs are being sent from spoke regions to the Loki server in the central region.
-- **Monitoring**: Check the Grafana dashboard for logs and metrics from all regions.
+- **Connectivity**: Verify network connectivity between all regions using transit gateways
+- **Logging**: Confirm logs are being sent from spoke regions to the Loki server in the central region
+- **Monitoring**: Check the Grafana dashboard for logs and metrics from all regions
 
 ---
 
 ## Tools and Technologies
 - **Terraform**: Infrastructure as Code
 - **AWS Services**:
-  - EC2, VPC, Transit Gateway, ALB, ASG, NAT Gateway, Internet Gateway
+  - EC2, VPC, ALB, ASG, Transit Gateway, Internet Gateway, NAT Gateway
 - **Logging/Monitoring**:
   - **Promtail**: Log collection
   - **Loki**: Centralized log storage
@@ -129,11 +150,3 @@ The SIEM VPC's EC2 instance in the central region uses a user data script to:
 
 ---
 
-## Future Enhancements
-- Add disaster recovery strategies for cross-region failover.
-- Implement encryption for data in transit and at rest.
-- Automate Grafana dashboard setup using Terraform or Grafana APIs.
-
----
-
-# Armageddon-Project
