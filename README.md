@@ -20,8 +20,7 @@ The central hub region houses:
   - A SIEM VPC which hosts Loki/Grafana for centralized logging and monitoring in a private subnet, installed through a user data script
   - A web application VPC mirroring spoke regions
 
-All regions are interconnected via Transit Gateways (TGWs), configured with peering connections to a single hub. This architecture simplifies and centralizes the networks structure
-to ensure seamless connectivity. 
+All regions are interconnected via Transit Gateways (TGWs), configured with peering connections to a single hub. This architecture simplifies and centralizes the networks structure to ensure seamless connectivity. 
 
 ---
 
@@ -46,15 +45,16 @@ to ensure seamless connectivity.
 
 ## Architecture
 
+![Armageddon 1 0 - Detailed Diagram of Hub and Spoke at Regional Level](https://github.com/user-attachments/assets/a290825d-2e81-4e38-83e1-17c3e20186c2)
+
+
 ### Network Overview
-![Network Diagram](https://github.com/user-attachments/assets/6ba644a0-d35f-4fa3-b12f-2a84df6a1f97)
 
+![Armageddo_1 0_Hub_and_Spoke_Routing_Diagram_ResultsSpeakLouder](https://github.com/user-attachments/assets/36a28a96-10da-4acb-a68d-51586693fa8e)
 
-### Routing Architecture
-![Routing Diagram](https://cdn.discordapp.com/attachments/1277613088488685632/1315015699940245515/image.png?ex=675730ce&is=6755df4e&hm=282391458150aa12184deebed85e23df188689ea02c9b89dd3936ce9861ef3ea&)
 
 ### Proof of Connectivity
-![Tool Screenshot](https://cdn.discordapp.com/attachments/1277613088488685632/1314891650211905546/image.png?ex=6756bd46&is=67556bc6&hm=e0fd106efa6a6a2431a4a995358fff57bcac1636c9e645b22b58e84616288095&)
+<img width="972" alt="Connection to SIEM sys log in hub region" src="https://github.com/user-attachments/assets/dec73cd5-ddb3-4368-a38b-777d0a637548" />
 
 ---
 
@@ -92,11 +92,13 @@ terraform validate
 terraform plan -autoapprove
 ```
 
-#### Step 5: Deploy the Infrastructure 
+#### Step 6: Deploy the Infrastructure 
 ```bash
 terraform apply -autoapprove
 ```
 # Note: During the deployment of the infrastructure, you may encounter an error regarding a resource being in and "invalid state". We are still investigating a programmatic solution. In the interim type terraform apply -autoapprove again to complete the remainder of the deployment.
+<img width="588" alt="Invalid State Error" src="https://github.com/user-attachments/assets/cd4e2cb4-002e-49b7-b323-758047801983" />
+
 
 ### Step 7: Confirm the Set-up
 
