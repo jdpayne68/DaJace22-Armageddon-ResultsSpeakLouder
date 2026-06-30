@@ -96,7 +96,7 @@ resource "aws_route_table" "sydney_route_table_private_subnet" {
   }
 
   route {
-    cidr_block         = "10.230.0.0/16"
+    cidr_block         = "10.70.0.0/16"
     transit_gateway_id = aws_ec2_transit_gateway.local_sydney.id
   }
 

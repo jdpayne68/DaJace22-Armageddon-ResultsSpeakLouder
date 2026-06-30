@@ -6,7 +6,7 @@ variable "vpc_availability_zone_Tokyo" {
 
 // VPC
 resource "aws_vpc" "tokyo" {
-  cidr_block           = "10.230.0.0/16"
+  cidr_block           = "10.70.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
   provider             = aws.tokyo
@@ -101,27 +101,27 @@ resource "aws_route_table" "tokyo_route_table_private_subnet" {
   }
 */
   route {
-    cidr_block = "10.232.0.0/16"
+    cidr_block = "10.71.0.0/16"
     gateway_id = aws_ec2_transit_gateway.peer.id
   }
 
   route {
-    cidr_block = "10.233.0.0/16"
+    cidr_block = "10.73.0.0/16"
     gateway_id = aws_ec2_transit_gateway.peer.id
   }
 
   route {
-    cidr_block = "10.234.0.0/16"
+    cidr_block = "10.74.0.0/16"
     gateway_id = aws_ec2_transit_gateway.peer.id
   }
 
   route {
-    cidr_block = "10.235.0.0/16"
+    cidr_block = "10.76.0.0/16"
     gateway_id = aws_ec2_transit_gateway.peer.id
   }
 
   route {
-    cidr_block = "10.236.0.0/16"
+    cidr_block = "10.75.0.0/16"
     gateway_id = aws_ec2_transit_gateway.peer.id
   }
 

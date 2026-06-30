@@ -6,12 +6,12 @@ variable "vpc_availability_zone_HK" {
 
 // VPC
 resource "aws_vpc" "hong_kong" {
-  cidr_block           = "10.231.0.0/16"
+  cidr_block           = "10.76.0.0/16"
   enable_dns_hostnames = true
   enable_dns_support   = true
   provider             = aws.hong_kong
   tags = {
-    Name = "New York VPC"
+    Name = "Hong Kong VPC"
   }
 }
 
@@ -23,7 +23,7 @@ resource "aws_subnet" "public_subnet_HK" {
   availability_zone = element(var.vpc_availability_zone_HK, count.index)
   provider          = aws.hong_kong
   tags = {
-    Name = "New York Public Subnet${count.index + 1}",
+    Name = "Hong Kong Public Subnet${count.index + 1}",
   }
 }
 
@@ -34,17 +34,17 @@ resource "aws_subnet" "private_subnet_HK" {
   availability_zone = element(var.vpc_availability_zone_HK, count.index)
   provider          = aws.hong_kong
   tags = {
-    Name = "New York Private Subnet${count.index + 1}",
+    Name = "Hong Kong Private Subnet${count.index + 1}",
   }
 }
 
 // IGW
-resource "aws_internet_gateway" "newyork_igw" {
+resource "aws_internet_gateway" "hong_kong_igw" {
   vpc_id   = aws_vpc.hong_kong.id
   provider = aws.hong_kong
 
   tags = {
-    Name = "newyork_igw"
+    Name = "hong_kong_igw"
   }
 }
 
@@ -55,7 +55,7 @@ resource "aws_route_table" "hong_kong_route_table_public_subnet" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.newyork_igw.id
+    gateway_id = aws_internet_gateway.hong_kong_igw.id
   }
 
   tags = {
@@ -96,7 +96,7 @@ resource "aws_route_table" "hong_kong_route_table_private_subnet" {
   }
 
   route {
-    cidr_block         = "10.230.0.0/16"
+    cidr_block         = "10.70.0.0/16"
     transit_gateway_id = aws_ec2_transit_gateway.local_hong_kong.id
   }
 
@@ -169,24 +169,24 @@ resource "aws_security_group" "hong_kong_ec2_sg" {
 }
 
 // Load Balancer
-resource "aws_lb" "newyork_alb" {
-  name                       = "newyork-load-balancer"
+resource "aws_lb" "hong_kong_alb" {
+  name                       = "hong-kong-load-balancer"
   load_balancer_type         = "application"
   internal                   = false
   subnets                    = aws_subnet.public_subnet_HK[*].id
-  depends_on                 = [aws_internet_gateway.newyork_igw]
+  depends_on                 = [aws_internet_gateway.hong_kong_igw]
   enable_deletion_protection = false
   provider                   = aws.hong_kong
 
   tags = {
-    Name    = "newyorkLoadBalancer"
-    Service = "newyork"
+    Name    = "hong_kongLoadBalancer"
+    Service = "hong_kong"
   }
 }
 
 // Target Group
-resource "aws_lb_target_group" "newyork-tg" {
-  name        = "newyork-tg"
+resource "aws_lb_target_group" "hong_kong-tg" {
+  name        = "hong-kong-tg"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = aws_vpc.hong_kong.id
@@ -205,29 +205,29 @@ resource "aws_lb_target_group" "newyork-tg" {
   }
 
   tags = {
-    Name    = "newyork-tg"
-    Service = "NewYorkTG"
+    Name    = "hong_kong-tg"
+    Service = "hong_kongTG"
   }
 }
 
 // Listener
-resource "aws_lb_listener" "newyork_http" {
-  load_balancer_arn = aws_lb.newyork_alb.arn
+resource "aws_lb_listener" "hong_kong_http" {
+  load_balancer_arn = aws_lb.hong_kong_alb.arn
   port              = 80
   protocol          = "HTTP"
   provider          = aws.hong_kong
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.newyork-tg.arn
+    target_group_arn = aws_lb_target_group.hong_kong-tg.arn
   }
 }
 
 // Launch Template
-resource "aws_launch_template" "newyork_LT" {
+resource "aws_launch_template" "hong_kong_LT" {
   provider      = aws.hong_kong
-  name          = "newyork_LT"
-  image_id      = "ami-0453ec754f44f9a4a"
+  name          = "hong_kong_LT"
+  image_id      = "ami-08d17dd56120aa5b4"
   instance_type = "t3.micro"
 
     user_data = filebase64("userdata.sh")
@@ -251,12 +251,12 @@ resource "aws_autoscaling_group" "hong_kong_ec2_asg" {
   min_size            = 2
   desired_capacity    = 2
   name                = "hong_kong-web-server-asg"
-  target_group_arns   = [aws_lb_target_group.newyork-tg.arn]
+  target_group_arns   = [aws_lb_target_group.hong_kong-tg.arn]
   vpc_zone_identifier = aws_subnet.private_subnet_HK[*].id
   provider            = aws.hong_kong
 
   launch_template {
-    id      = aws_launch_template.newyork_LT.id
+    id      = aws_launch_template.hong_kong_LT.id
     version = "$Latest"
   }
 
